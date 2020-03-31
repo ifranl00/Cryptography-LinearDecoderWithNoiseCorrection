@@ -1,4 +1,4 @@
-package p4;
+package p5;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,7 +9,7 @@ import javax.swing.JSpinner.ListEditor;
 import sun.util.BuddhistCalendar;
 
 
-public class p4 {
+public class P5 {
 
 	public static void main(String[] args) {
 		String texto = leeTexto("C:\\Users\\Manuela\\git\\SeguridadInformaticaP4\\textos\\lista.txt");
