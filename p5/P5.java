@@ -16,7 +16,7 @@ public class P5 {
 		String alf=".,;()¿?¡!-0123456789 aábcdeéfghiíjklmnñoópqrstuúvwxyzAÁBCDEÉFGHIÍJKLMNÑOÓPQRSTUÚVWXYZ";
 		ArrayList<String> codificacion = construyeCodigo(alf, 5);
 		
-		/* CODIFICACION LISTA */
+		/* CODIFICACION LISTA */ 
 		String [] listaT = texto.split(",");	
 
 		ArrayList<String> lista = new ArrayList<String>();
