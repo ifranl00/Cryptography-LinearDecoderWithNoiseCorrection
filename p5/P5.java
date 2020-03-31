@@ -9,13 +9,12 @@ import java.util.ArrayList;
 public class P5 {
 
 	public static void main(String[] args) {
-		String texto = leeTexto("C:\\Users\\Manuela\\git\\SeguridadInformaticaP4\\textos\\lista.txt");
+		String texto = leeTexto("C:\\Users\\Manuela\\git\\SeguridadInformaticaP5\\textos\\listaPruebas.txt");
 
 		
 		/* CODIFICACION DE ALFABETO FUENTE */
 		String alf=".,;()¿?¡!-0123456789 aábcdeéfghiíjklmnñoópqrstuúvwxyzAÁBCDEÉFGHIÍJKLMNÑOÓPQRSTUÚVWXYZ";
-		ArrayList<String> codificacion = construyeCodigo(alf);
-		
+		ArrayList<String> codificacion = construyeCodigo(alf, 5);
 		
 		/* CODIFICACION LISTA */
 		String [] listaT = texto.split(",");	
@@ -26,19 +25,19 @@ public class P5 {
 			lista.add(listaT[i]);
 		}
 	
-		ArrayList<String> def = trocea(lista, 15);
+		ArrayList<String> def = trocea(lista, 11);
 		
-		def.add(setCola(lista));
+		def.add(setCola(lista, 11)); 
 		
-		/*
-		for (int j = 0; j < def.size(); j++) {
+		
+		/*for (int j = 0; j < def.size(); j++) {
 			System.out.println(def.get(j));
 		}
-		/*
+		*/
 		
 		/* MATRIZ  (A) */
-		String a = "101010111101011001101101100010100110001110011111100000";
-		int [][] A = new int[6][9];
+		String a = "1211101211101111101121101121";
+		int [][] A = new int[4][7];
 		int x = 0;
 		
 		for (int i = 0; i < A.length; i++) {
@@ -51,8 +50,8 @@ public class P5 {
 		/* MATRIZ DE CONTROL (H) */
 		
 		int [][] H = creaMatrizControlH(A);
-		/*
-		for (int s = 0; s < H.length; s++) {
+		
+		/*for (int s = 0; s < H.length; s++) {
 			for (int ss = 0; ss < H[0].length; ss++) {
 				System.out.print(H[s][ss] + "");
 			}
@@ -63,14 +62,15 @@ public class P5 {
 
 		/*	------ TABLERO DE SINDROMES ------
 		 * > Errores con peso <= 2, es decir que tengan como mucho 2 unos
-		 * > y con una longitud de 9
+		 * > y con una longitud de 11
 		 * > sindrome = H * eT
 		 */
-		ArrayList<String> errores = errores(2, 15);
-		/*
-		for (int i = 0; i <  errores.size(); i++) {
+		ArrayList<String> errores = errores(2, 11);
+		
+		/*for (int i = 0; i <  errores.size(); i++) {
 			System.out.println(errores.get(i)+ " ");
 		}*/
+		
 		ArrayList<Sindrome> tablero = construyeTablero(errores, H);
 		
 	/*
@@ -84,19 +84,19 @@ public class P5 {
 		
 		/* DECODIFICACION LINEAL */
 		
-		ArrayList<String> secDecoLin = decodificacionLineal(secCorr);
+		ArrayList<String> secDecoLin = decodificacionLineal(secCorr, 4);
 		
 		/* DECODIFICACION FUENTE */
 		
 		int longAlf = alf.length();
-		double longMinBiBloque = Math.ceil(Math.log(longAlf) / Math.log(2));
+		double longMinBiBloque = Math.ceil(Math.log(longAlf) / Math.log(3));
 		String aux = "";
 		
 		for (int y = 0; y < secDecoLin.size(); y++) {
 			aux = aux + "" + secDecoLin.get(y); 	
 		}
 		
-		ArrayList<String> secDecoTroc = divideDe7En7(aux, longMinBiBloque);
+		ArrayList<String> secDecoTroc = divideDeXEnX(aux, longMinBiBloque);
 
 		/* TRADUCCION */
 		
@@ -124,12 +124,12 @@ public class P5 {
 		return texto;
 	}
 	
-	public static ArrayList<String> decodificacionLineal( ArrayList<String> secCorr){
+	public static ArrayList<String> decodificacionLineal( ArrayList<String> secCorr, int conserva){
 		
 		 ArrayList<String> secDecoLin= new  ArrayList<String>();
 		 
 		 for (int i = 0; i < secCorr.size(); i++) {
-				secDecoLin.add(secCorr.get(i).substring(0, 6));
+				secDecoLin.add(secCorr.get(i).substring(0, conserva));
 		}
 		 
 		 return secDecoLin;
@@ -137,7 +137,7 @@ public class P5 {
 	}
 
 	/*
-	 * Troceamos de 15 en 15
+	 * Troceamos de 11 en 11
 	 */
 	public static ArrayList<String> trocea(ArrayList<String> lista, int nTrozos) {
 		
@@ -151,28 +151,28 @@ public class P5 {
 			if(i%nTrozos == nTrozos-1) {
 				listaTroceada.add(aux);
 				aux = "";
-			}	
+			}
 		}
 		
 		return listaTroceada;
 	}
 	
-	public static String setCola(ArrayList<String> lista) {
+	public static String setCola(ArrayList<String> lista, int longPalabra) {
 		String cola = "";
 		int c = 0;
 		
 		for (int i = 0; i < lista.size(); i++) {
 			
-			if(i%15 == 14) {
+			if(i%longPalabra == longPalabra-1) {
 				c++;
 			}
 			
-			if(c >= lista.size()/15) {
+			if(c >= lista.size()/longPalabra) {
 				cola = cola + "" + lista.get(i);
 			}
 		}
 		
-		for (int j = cola.length(); j < 15; j++) {
+		for (int j = cola.length(); j < longPalabra; j++) {
 			cola = "0"+ cola;
 		}
 		
@@ -184,8 +184,8 @@ public class P5 {
 	 */
 	public static String buscaSindrome(String secuencia, int[][]H, ArrayList<Sindrome> tablero) {
 		
-		String error = "000000000000000"; //inicializamos a que el error es 0
-		int [][] r = multiplicaMatrices(H, construyeTranspuesta(toVector(secuencia)));
+		String error = "00000000000"; //inicializamos a que el error es 0
+		int [][] r = multiplicaMatrices(H, construyeTranspuesta(toVector(secuencia)),3);
 		String r2 = vectorToString(construyeTranspuesta(r));
 		
 		//Buscamos en el tablero en sindromes
@@ -202,7 +202,7 @@ public class P5 {
 	 * Corregir la secuencia y hay que hacer la cuenta y−e moD 2. 
 	 * @return La secuencia obtenida es ﬁable (SIN RUIDO).
 	 */
-	public static String correctorRuido(String secuencia, String errorPatron) {
+	public static String correctorRuido(String secuencia, String errorPatron, int mod) {
 		
 		int[][] sec = toVector(secuencia);
 		int[][] err = toVector(errorPatron);
@@ -210,8 +210,12 @@ public class P5 {
 		
 		
 			for (int i = 0; i < secSinRuido[0].length; i++) {
-				secSinRuido[0][i] = sec[0][i] + err[0][i];
-				secSinRuido[0][i] = secSinRuido[0][i]%2;
+				secSinRuido[0][i] = sec[0][i] - err[0][i];
+				
+				secSinRuido[0][i] = secSinRuido[0][i]%mod;
+				if(secSinRuido[0][i] < 0) {
+					secSinRuido[0][i] = secSinRuido[0][i]+mod;
+				}
 			}
 		
 		return (vectorToString(secSinRuido));
@@ -225,26 +229,27 @@ public class P5 {
 		
 		ArrayList<String> secuenciasCorregidas = new ArrayList<String>();
 		for (int i = 0; i < def.size(); i++) {
-			secuenciasCorregidas.add(i,correctorRuido(def.get(i), buscaSindrome(def.get(i), H, tablero)));
+			secuenciasCorregidas.add(i,correctorRuido(def.get(i), buscaSindrome(def.get(i), H, tablero),3));
 		}
 		return secuenciasCorregidas;
 		
 	}
 	
-	public static ArrayList<String> construyeCodigo(String a) {
+	public static ArrayList<String> construyeCodigo(String a, int longPalabraAlfabetoFuente) {
 		ArrayList<String> cod = new ArrayList<String>();
 		String aux = "";
 		
 		for (int i = 0; i < a.length(); i++) {
-			aux = Integer.toBinaryString(i);
-			if(aux.length()<7) {
-				for (int j = aux.length(); j < 7; j++) {
+			aux = Integer.toString(i,3);
+			if(aux.length()<longPalabraAlfabetoFuente) {
+				for (int j = aux.length(); j < longPalabraAlfabetoFuente; j++) {
 					aux = "0"+aux;
 				}
 			}
 			cod.add(aux);
 			aux = "";
 		}
+		
 		
 		return cod;
 	}
@@ -274,7 +279,7 @@ public class P5 {
 		}	
 	}
 
-	private static ArrayList<String> divideDe7En7(String def, double longMin) {
+	private static ArrayList<String> divideDeXEnX(String def, double longMin) {
 		ArrayList<String> div = new ArrayList<String>();
 		String aux = "";
 		
@@ -295,7 +300,7 @@ public class P5 {
 	private static int[][] creaMatrizGeneradora(int[][] a){
 		
 		//calculo matriz identidad
-		int [][]iden = construyeMatrizIdentidad(6);
+		int [][]iden = construyeMatrizIdentidad(4);
 		
 		//calculamos G =(iden | A)
 				int m = iden.length; //6 filas
@@ -329,30 +334,44 @@ public class P5 {
 	private static int[][] creaMatrizControlH(int [][] a2) {
 		
 		//calculo matriz identidad
-		int [][]iden = construyeMatrizIdentidad(9);
+		int [][]iden = construyeMatrizIdentidad(7);
 		
 		//calculamos a2 transpuesta
 		int[][] aT = construyeTranspuesta(a2);
 		
-		//calculamos H =(aT | iden)
-		int m = aT.length; //9 filas
-		int n = iden[0].length; //9 columnas
-		int c = 0;
-		int[][] h = new int[m][aT[0].length+n];
+		/*for (int k = 0; k < aT.length; k++) {
+			for (int y = 0; y < aT[0].length; y++) {
+				System.out.print(aT[k][y] + " ");
+			}
+			System.out.println("");
+		}
+		*/
 		
-		for (int i = 0; i < h.length; i++) { // recorre filas 9
-			for (int j = 0; j < h[i].length; j++) { // recorre columnas 15
-				if(j<aT[0].length) {
-					h[i][j] = aT[i][j];
+		//Negamos a2
+		
+		int[][]atN = niegaMatriz(aT, 3);
+		
+		//calculamos H =(aTN | iden)
+		int m = atN.length; //7 filas
+		int n = iden[0].length; //4 columnas
+		int c = 0;
+		
+		int[][] h = new int[m][atN[0].length+n];
+		
+		for (int i = 0; i < h.length; i++) { // recorre filas 7
+			for (int j = 0; j < h[i].length; j++) { // recorre columnas 11
+				if(j<atN[0].length) {
+					h[i][j] = atN[i][j];
 				}else {
 					h[i][j] = iden[i][c];
+					
 					c++;
 				}
 				
 			}
 			c = 0;
 		}
-		return h; //9x15
+		return h; //7x11
 	}
 	
 	private static int[][] construyeMatrizIdentidad(int s){
@@ -388,11 +407,10 @@ public class P5 {
 		String aux = " ";
 		int c = 0;
 		int a = 0;
-		
 
 		
-		while(!aux.equals("111111111111111")) {
-			aux = Integer.toBinaryString(c);
+		while(!aux.equals("22222222222")) {
+			aux = Integer.toString(c, 3);
 			if(aux.length()<longitud) {
 				for (int j = aux.length(); j < longitud; j++) {
 					aux = "0"+aux;
@@ -409,14 +427,16 @@ public class P5 {
 	
 		return listaErr;
 	}
-	
-	private static boolean errorValido(String e, int p) {
+	/*
+	 * Cambiar en el if que sea la long del error 
+	 */
+	private static boolean errorValido(String e, int p) { 
 		boolean valido = false;
 		int peso = 0;
 		
-		if(e.length() == 15) {
+		if(e.length() == 11) {
 			for (int i = 0; i < e.length(); i++) {
-				if(e.charAt(i) == '1') {
+				if(e.charAt(i) == '1' || e.charAt(i) == '2') {
 					peso++;
 				}
 			}
@@ -438,7 +458,7 @@ public class P5 {
 			e = toVector(errores.get(i));
 			eT = construyeTranspuesta(e);
 			
-			m = multiplicaMatrices(H, eT);
+			m = multiplicaMatrices(H, eT, 3);
 			tablero.add(new Sindrome(errores.get(i),vectorToString(construyeTranspuesta(m))));
 		}
 		return tablero;
@@ -452,7 +472,7 @@ public class P5 {
 		return v;
 	}
 	
-	private static int[][] multiplicaMatrices(int [][] h, int [][] m) {
+	private static int[][] multiplicaMatrices(int [][] h, int [][] m, int mod) {
 		
 		int[][] mResultado = new int[h.length][m[0].length];
 	    if (h[0].length == m.length) { // si se pueden multiplicar
@@ -460,12 +480,30 @@ public class P5 {
 	            for (int j = 0; j < m[0].length; j++) {
 	                for (int k = 0; k < h[0].length; k++) {
 	                    mResultado[i][j] += h[i][k] * m[k][j];
-	                    mResultado[i][j] = mResultado[i][j]%2; //congruente en modulo 2
+	                    mResultado[i][j] = mResultado[i][j]%mod; //congruente en modulo 2
 	                }
 	            }
 	        }
 	    }
 	    return mResultado;
+		
+	}
+	
+	private static int[][] niegaMatriz(int[][]aT, int modulo){
+		
+		int[][] mNegada = new int[aT.length][aT[0].length];
+		
+		 for (int i = 0; i < aT.length; i++) {
+	            for (int j = 0; j < aT[0].length; j++) {
+	               mNegada[i][j] = -aT[i][j];
+	               
+	               if(mNegada[i][j] != 0) {
+	            		mNegada[i][j] = mNegada[i][j] + modulo;
+	               }
+	            }
+	        }
+		
+		return mNegada;
 		
 	}
 	
