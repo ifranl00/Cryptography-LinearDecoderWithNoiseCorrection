@@ -13,7 +13,7 @@ public class P5 {
 
 		
 		/* CODIFICACION DE ALFABETO FUENTE */
-		String alf="AÁBCDEÉFGHIÍJKLMNÑOÓPQRSTUÚVWXYZ .,;:()¿?¡!-0123456789aábcdeéfghiíjklmnñoópqrstuúvwxyz";
+		String alf=".,;()¿?¡!-0123456789 aábcdeéfghiíjklmnñoópqrstuúvwxyzAÁBCDEÉFGHIÍJKLMNÑOÓPQRSTUÚVWXYZ";
 		ArrayList<String> codificacion = construyeCodigo(alf);
 		
 		
